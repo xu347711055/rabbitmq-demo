@@ -9,7 +9,15 @@ spring:
     password: admin
     port: 5672
     username: admin
+    listener:
+      prefetch: 1
 
 logging:
   level:
     org: INFO
+
+receiver:
+  queue1:
+    wait: 5000
+  queue2:
+    wait: 5000

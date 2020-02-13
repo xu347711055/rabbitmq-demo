@@ -15,4 +15,5 @@ logging:
     org: INFO
 
 sender:
-  duration: '0/10 * * * * ?'
+  workqueues.duration: '0/1 * * * * ?'
+  publish.duration: '0/1 * * * * ?'
