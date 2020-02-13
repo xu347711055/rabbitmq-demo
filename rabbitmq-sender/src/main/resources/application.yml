@@ -1,0 +1,18 @@
+server:
+  port: 8883
+
+spring:
+  application:
+    name: rabbitmq-producer
+  rabbitmq:
+    host: 127.0.0.1
+    password: admin
+    port: 5672
+    username: admin
+
+logging:
+  level:
+    org: INFO
+
+sender:
+  duration: '0/10 * * * * ?'

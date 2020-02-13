@@ -1,0 +1,15 @@
+server:
+  port: 8882
+
+spring:
+  application:
+    name: rabbitmq-receiver
+  rabbitmq:
+    host: 127.0.0.1
+    password: admin
+    port: 5672
+    username: admin
+
+logging:
+  level:
+    org: INFO
