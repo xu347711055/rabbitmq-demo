@@ -11,7 +11,7 @@ import org.springframework.util.StopWatch;
 
 @Component
 @Slf4j
-public class RabbitReceiver {
+public class RabbitWorkQueueReceiver implements Receiver{
 
     @Value("${receiver.queue1.wait}")
     private Integer queue1WaitTime;
@@ -19,28 +19,20 @@ public class RabbitReceiver {
     private Integer queue2WaitTime;
 
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.QUEUE_NAME1)
-    public void receive1(Message message) {
-        StopWatch watch = new StopWatch();
-        watch.start();
-        if (message == null) {
-            return;
-        }
-        //奇数延迟
-        if (message.getId()%2 != 0) {
-            try {
-                Thread.sleep(queue1WaitTime);
-            } catch (InterruptedException e) {
-                log.error("sleep出现异常", e);
-            }
-        }
-        watch.stop();
-        log.info("队列1接收到message: [{}], 处理时间为: {}s", message, watch.getTotalTimeSeconds());
+    @RabbitListener(queues = CommonConstants.WORK_QUEUE)
+    @Override
+    public void receiver1(Message message) {
+        process(message, 1);
     }
 
     @RabbitHandler
-    @RabbitListener(queues = CommonConstants.QUEUE_NAME1)
-    public void receive2(Message message) {
+    @RabbitListener(queues = CommonConstants.WORK_QUEUE)
+    @Override
+    public void receiver2(Message message) {
+        process(message, 2);
+    }
+
+    public void process(Message message, int queueId) {
         StopWatch watch = new StopWatch();
         watch.start();
         if (message == null) {
@@ -48,13 +40,14 @@ public class RabbitReceiver {
         }
         //奇数延迟
         if (message.getId()%2 != 0) {
+            int waitTime = queueId == 1 ? queue1WaitTime : queue2WaitTime;
             try {
-                Thread.sleep(queue2WaitTime);
+                Thread.sleep(waitTime);
             } catch (InterruptedException e) {
                 log.error("sleep出现异常", e);
             }
         }
         watch.stop();
-        log.info("队列2接收到message: [{}], 处理时间为: {}s", message, watch.getTotalTimeSeconds());
+        log.info("点对点消费者{}接收到message: [{}], 处理时间为: {}s", queueId, message, watch.getTotalTimeSeconds());
     }
 }

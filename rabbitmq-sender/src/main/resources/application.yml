@@ -9,11 +9,15 @@ spring:
     password: admin
     port: 5672
     username: admin
+    virtual-host: /
+    #指定client连接到的server的地址，多个以逗号分隔(优先取addresses，然后再取host)
+    addresses: 127.0.0.1:5672
+    requested-heartbeat: 40
 
 logging:
   level:
     org: INFO
 
 sender:
-  workqueues.duration: '0/1 * * * * ?'
-  publish.duration: '0/1 * * * * ?'
+  workqueues.duration: '0/2 * * * * ?'
+  publish.duration: '0/2 * * * * ?'
